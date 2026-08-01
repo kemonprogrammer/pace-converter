@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pace Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4 sm:p-6 font-sans">
+
+  <main class="w-full max-w-md bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+    
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b border-slate-700/50 pb-5">
+      <div>
+        <h1 class="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
+          <i data-lucide="gauge" class="w-6 h-6 text-indigo-400"></i>
+          Pace Converter
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">Calculate and convert running metrics effortlessly</p>
+      </div>
+      <button 
+        type="button" 
+        title="Reset all" 
+        class="p-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+      >
+        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+      </button>
+    </header>
+
+    <!-- Pace & Speed Section -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Pace & Speed</h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 bg-slate-900/40 p-4 rounded-2xl border border-slate-700/30">
+        <!-- min/km -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-slate-400">min / km</label>
+          <div class="relative">
+            <input 
+               id="min-per-km"
+              type="text" 
+              placeholder="e.g. 5:00" 
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            >
+          </div>
+        </div>
+
+        <!-- km/h -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-slate-400">km / h</label>
+          <div class="relative">
+            <input 
+               id="km-per-h"
+              type="number" 
+              placeholder="e.g. 12.0" 
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            >
+          </div>
+        </div>
+
+        <!-- min/mile -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-slate-400">min / mile</label>
+          <div class="relative">
+            <input 
+               id="min-per-mile"
+              type="text" 
+              placeholder="e.g. 8:03" 
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            >
+          </div>
+        </div>
+
+        <!-- mph -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-slate-400">mph</label>
+          <div class="relative">
+            <input 
+               id="mile-per-h"
+              type="number" 
+              placeholder="e.g. 7.46" 
+              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Distance & Time Section -->
+    <section class="space-y-4">
+      <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Workout Targets</h2>
+      
+      <div class="space-y-4">
+        <!-- Distance -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-slate-400">Distance</label>
+          <div class="flex items-center gap-2">
+            <input 
+               id="distance"
+              type="number" 
+              placeholder="10" 
+              class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            >
+            <select class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+              <option value="km">km</option>
+              <option value="mi">mi</option>
+              <option value="m">m</option>
+            </select>
+            <button 
+              type="button" 
+              title="Reset distance"
+              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95"
+            >
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-medium text-slate-400">Duration</label>
+          <div class="flex items-center gap-2">
+            <input 
+               id="duration"
+              type="text" 
+              placeholder="00:50:00" 
+              class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            >
+            <select class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+              <option value="hours">hours</option>
+              <option value="mins">mins</option>
+            </select>
+            <button 
+              type="button" 
+              title="Reset duration"
+              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95"
+            >
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+  <script src="index.js"> </script>
+</body>
+</html>
+<!-- <!DOCTYPE html> -->
+<!-- <html lang="en"> -->
+<!-- <head> -->
+<!--   <meta charset="UTF-8"> -->
+<!--   <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<!--   <title>Document</title> -->
+<!-- </head> -->
+<!-- <body> -->
+<!---->
+<!--   <h2>pace</h2> -->
+<!--   <input id="min-per-km" type="text" name="min-per-km" value=""> -->
+<!--   <label for="min-per-km">min/km</label><br> -->
+<!---->
+<!--   <input id="min-per-mile" type="text" name="min-per-mile" value=""> -->
+<!--   <label for="min-per-mile">min/mile</label><br> -->
+<!---->
+<!---->
+<!--   <h2>velocity</h2> -->
+<!--   <input id="km-per-hour" type="text" name="km-per-hour" value=""> -->
+<!--   <label for="km-per-hour">km/h</label><br> -->
+<!--   <input id="mile-per-hour" type="text" name="mile-per-hour" value=""> -->
+<!--   <label for="mile-per-hour">mph</label><br> -->
+  <!-- use cases: length + pace -> duration -->
+  <!-- use cases: length + duration -> pace -->
+  <!-- use cases: pace + duration -> length -->
+  <!-- predefined: custom length, mile, 3km, 5km, 10km, half marathon, marathon-->
+<!-- </body> -->
+<!---->
+<!-- <script> -->
+<!---->
+<!-- </script> -->
+<!-- </html> -->
+
