@@ -1,3 +1,5 @@
 export default {
-  base: "/pace-converter/",
+  preview: {
+    base: "/pace-converter/",
+  }
 }
