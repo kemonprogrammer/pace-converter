@@ -13,24 +13,38 @@ export default defineConfig({
         enabled: true
       },
       injectRegister: 'auto',
+      includeAssets: ['icon-64.png', 'icon-192.png', 'icon-512.png', 'icon-white-512.png', 'favicon.ico', 'favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Pace Converter',
         short_name: 'PaceConverter',
-        start_url: '/pace-converter',
+        start_url: './',
+        scope: './',
         display: 'standalone',
         background_color: '#0f172b',
         theme_color: '#616ccc',
         icons: [
           {
-            src: '/icon-192x192.png',
+            src: 'icon-64.png',
+            sizes: '64x64',
+            type: 'image/png'
+          },
+          {
+            src: 'icon-192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/icon-512x512.png',
+            src: 'icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
-          }
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: 'icon-white-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
         ]
       }
     })
