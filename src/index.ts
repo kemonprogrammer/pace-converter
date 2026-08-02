@@ -4,8 +4,8 @@ const minPerKmEl = document.querySelector<HTMLInputElement>('#min-per-km');
 const minPerMiEl = document.querySelector<HTMLInputElement>('#min-per-mile');
 const kmphEl = document.querySelector<HTMLInputElement>('#km-per-h');
 const mphEl = document.querySelector<HTMLInputElement>('#mile-per-h');
-const durationEl = document.querySelector<HTMLInputElement>('#duration');
-const distanceEl = document.querySelector<HTMLInputElement>('#distance');
+// const durationEl = document.querySelector<HTMLInputElement>('#duration');
+// const distanceEl = document.querySelector<HTMLInputElement>('#distance');
 
 const KM_IN_MILE = 1.60934;
 const MIN_IN_H = 60;
@@ -172,6 +172,7 @@ const speed = new Proxy<SpeedState>(
 
       // calculate kmph
       if (prop !== 'kmph') {
+        // @ts-ignore
         const converter = conversion[prop]?.kmph as (v: any) => number;
         if (converter) {
           obj.kmph = converter(val);
