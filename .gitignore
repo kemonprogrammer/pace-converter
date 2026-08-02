@@ -12,6 +12,7 @@
 # production
 /dist
 /dist-ssr
+/dev-dist
 
 # various
 /playwright-report
