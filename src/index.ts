@@ -174,15 +174,15 @@ const speedConversion = {
 const distanceConversion = {
   km: {
     m: (km: number) => km * M_IN_KM,
-    mi: (km: number) => km * KM_IN_MILE,
+    mi: (km: number) => km / KM_IN_MILE,
   },
   m: {
-    km: (m: number) => m * M_IN_KM,
-    mi: (m: number) => m * M_IN_KM * KM_IN_MILE,
+    km: (m: number) => m / M_IN_KM,
+    mi: (m: number) => m / (M_IN_KM * KM_IN_MILE),
   },
   mi: {
-    m: (mi: number) => mi * M_IN_KM / KM_IN_MILE,
-    km: (mi: number) => mi / KM_IN_MILE,
+    m: (mi: number) => mi * M_IN_KM * KM_IN_MILE,
+    km: (mi: number) => mi * KM_IN_MILE,
   },
 } as const
 
