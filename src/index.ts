@@ -1,7 +1,4 @@
-const M_IN_KM = 1000;
-const KM_IN_MILE = 1.60934;
-const MIN_IN_H = 60;
-const SEC_IN_MIN = 60;
+import { calculateDistance, calculateDurationInS, calculateSpeed, convertDistance, convertDuration, parseDuration, speedConversion, type DistanceUnit, type DurationUnit } from './util.ts';
 
 type SpeedKey = 'kmph' | 'minPerKm' | 'minPerMi' | 'mph';
 
@@ -24,13 +21,11 @@ const distanceEl = getRequiredElement<HTMLInputElement>('#distance');
 const distanceUnitSel = getRequiredElement<HTMLSelectElement>('#distance-unit');
 const durationUnitSel = getRequiredElement<HTMLSelectElement>('#duration-unit');
 
-const distanceBtn = getRequiredElement<HTMLInputElement>('#recalculate-distance');
-const paceBtn = getRequiredElement<HTMLInputElement>('#recalculate-pace');
-const durationBtn = getRequiredElement<HTMLInputElement>('#recalculate-time');
+const distanceRecalcBtn = getRequiredElement<HTMLInputElement>('#recalculate-distance');
+const speedRecalcBtn = getRequiredElement<HTMLInputElement>('#recalculate-pace');
+const durationRecalcBtn = getRequiredElement<HTMLInputElement>('#recalculate-time');
 
 
-type DistanceUnit = 'km' | 'mi' | 'm';
-type DurationUnit = 'hours' | 'mins';
 
 
 interface SpeedConfigItem {
@@ -57,89 +52,7 @@ const speedConfig: readonly SpeedConfigItem[] = Object.freeze([
   },
 ]);
 
-const minDecToStr = (minDec: number): string => {
-  let min = Math.trunc(minDec);
-  let sec = Math.round((minDec - min) * SEC_IN_MIN);
-  if (sec === 60) {
-    sec = 0;
-    min += 1;
-  }
-  const secStr = String(sec).padStart(2, '0');
-  return `${min}:${secStr}`;
-};
 
-interface DecResult {
-  min: number;
-  sec: number;
-}
-
-const minStrToDec = (minStr: string): DecResult | undefined => {
-  const parts = minStr.split(':');
-  if (parts.length > 2) {
-    console.error("at most 1 ':' allowed");
-    return;
-  }
-  if (parts.length === 0) {
-    return;
-  }
-  let min = 0;
-  let sec = 0;
-
-  min = parseInt(parts[0], 10);
-  if (min < 0 || isNaN(min)) {
-    console.error(`Invalid value for minutes: ${min}`);
-    return { min: 0, sec };
-  }
-  if (parts.length === 2) {
-    sec = Number(parts[1]);
-    if (isNaN(sec) || sec < 0 || sec >= SEC_IN_MIN) {
-      console.error(`Invalid value for seconds: ${sec}`);
-      return { min, sec: 0 };
-    }
-    sec = sec / SEC_IN_MIN;
-  }
-  return { min, sec };
-};
-
-const minPerMiToKmph = (minPerMi: string): number => {
-  const parts = minPerMi.split(':');
-
-  const min = Number(parts[0]);
-  let sec = 0;
-  if (parts.length === 2) {
-    sec = Number(parts[1]) / 60;
-  }
-  const minPerMiDec = min + sec;
-  return (KM_IN_MILE * MIN_IN_H) / minPerMiDec;
-};
-
-const kmphToMinPerKm = (kmph: number): string => {
-  const minDec = (kmph === 0) ? 0 : MIN_IN_H / kmph;
-  return minDecToStr(minDec);
-};
-
-const kmphToMinPerMi = (kmph: number): string => {
-  const minDec = kmph === 0
-    ? 0
-    : (MIN_IN_H * KM_IN_MILE) / kmph;
-  return minDecToStr(minDec);
-};
-
-const mphToKmph = (mph: number): number => {
-  return mph * KM_IN_MILE;
-};
-
-const kmphToMph = (kmph: number): number => {
-  return kmph / KM_IN_MILE;
-};
-
-const minPerKmToKmph = (minPerKm: string): number => {
-  const parsed = minStrToDec(minPerKm);
-  if (!parsed) return 0;
-  const { min, sec } = parsed;
-  const pace = min + sec;
-  return pace === 0 ? 0 : MIN_IN_H / pace;
-};
 
 interface SpeedState {
   kmph: number;
@@ -148,38 +61,6 @@ interface SpeedState {
   mph: number;
 }
 
-
-const speedConversion = {
-  kmph: {
-    mph: kmphToMph,
-    minPerKm: kmphToMinPerKm,
-    minPerMi: kmphToMinPerMi,
-  },
-  minPerKm: {
-    kmph: minPerKmToKmph,
-  },
-  minPerMi: {
-    kmph: minPerMiToKmph,
-  },
-  mph: {
-    kmph: mphToKmph,
-  },
-};
-
-const distanceConversion = {
-  km: {
-    m: (km: number) => km * M_IN_KM,
-    mi: (km: number) => km / KM_IN_MILE,
-  },
-  m: {
-    km: (m: number) => m / M_IN_KM,
-    mi: (m: number) => m / (M_IN_KM * KM_IN_MILE),
-  },
-  mi: {
-    m: (mi: number) => mi * M_IN_KM * KM_IN_MILE,
-    km: (mi: number) => mi * KM_IN_MILE,
-  },
-} as const
 
 const speed = new Proxy<SpeedState>(
   {
@@ -287,7 +168,7 @@ minPerMiEl.addEventListener('input', (e: Event) => {
 });
 
 
-paceBtn.addEventListener('click', (e) => {
+speedRecalcBtn.addEventListener('click', () => {
   const distance = Number(distanceEl.value)
   if (isNaN(distance)) {
     return
@@ -298,19 +179,19 @@ paceBtn.addEventListener('click', (e) => {
     ? distance
     : convertDistance(distance, unit, 'km')
 
-  const kmph = distance * SEC_IN_MIN * MIN_IN_H / duration.seconds
+  const kmph = calculateSpeed(distanceInKm, duration.seconds)
   speed.kmph = kmph
   // proxy setter fires on each input event and skips changing the 
   // current input to not mess up typing. Here no input is being typed on,
   // so we need to manually set input
-  kmphEl.value = Number(kmph).toFixed(2); 
+  kmphEl.value = Number(kmph).toFixed(2);
 
 })
 
 
-distanceEl.addEventListener('input', (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  const value = Number(target.value)
+distanceEl.addEventListener('input', () => {
+  // const target = e.target as HTMLInputElement;
+  // const value = Number(target.value)
 
 
   // check value empty
@@ -320,10 +201,80 @@ distanceEl.addEventListener('input', (e: Event) => {
 
   // else
   //   show buttons: recalculate pace + recalculate duration
-  paceBtn?.style.setProperty('display', 'block')
-  durationBtn?.style.setProperty('display', 'block')
+  speedRecalcBtn?.style.setProperty('display', 'block')
+  durationRecalcBtn?.style.setProperty('display', 'block')
 })
 
+
+const distanceUnit = new Proxy<{ previous: DistanceUnit }>({
+  previous: 'km'
+}, {
+  set(target, prop, value) {
+    if (prop === 'previous' && typeof value === 'string') {
+      target[prop] = value as DistanceUnit
+    }
+    return true
+  }
+})
+
+distanceUnitSel.addEventListener('change', (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const unit = target.value as DistanceUnit
+
+  const previousDistance = Number(distanceEl.value)
+  if (isNaN(previousDistance)) {
+    distanceUnit.previous = unit
+    return
+  }
+
+  //  todo save distance as meters
+  const distance = convertDistance(previousDistance, distanceUnit.previous, unit)
+
+  if (distanceEl) {
+    distanceEl.value = String(distance.toFixed(2))
+  }
+  distanceUnit.previous = unit
+})
+
+
+distanceRecalcBtn.addEventListener('click', () => {
+  if (duration.seconds === 0 || speed.kmph === 0) {
+    return
+  }
+  const unit = distanceUnitSel.value as DistanceUnit
+
+  const distanceInKm = calculateDistance(speed.kmph, duration.seconds)
+  const distance = (unit === 'km')
+    ? distanceInKm
+    : convertDistance(distanceInKm, 'km', unit)
+  distanceEl.value = distance.toFixed(2)
+})
+
+durationRecalcBtn.addEventListener('click', () => {
+  const distance = Number(distanceEl.value)
+  if (isNaN(distance) || distance === 0 || speed.kmph === 0) {
+    return
+  }
+  let distanceInKm = (distanceUnitSel.value === 'km')
+    ? distance
+    : convertDistance(distance, 'km', 'km')
+
+  duration.keepInput = false;
+  duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
+})
+
+
+
+durationEl.addEventListener('input', (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const value = target.value
+  const previousUnit = durationUnitSel.value as DurationUnit
+
+  const { durationInS, unit } = parseDuration(value, previousUnit)
+  duration.keepInput = true
+  duration.seconds = durationInS ?? 0
+  durationUnitSel.value = unit ?? previousUnit
+})
 
 interface DurationProxy {
   seconds: number;
@@ -351,84 +302,6 @@ const duration = new Proxy<DurationProxy>(
   }
 );
 
-// todo refactor
-const parseDuration = (durStr: string) => {
-  let durationInS = 0
-  const parts = durStr.split(':')
-  if (parts.length > 3) {
-    return 0
-  }
-  if (parts.length === 1) {
-
-    if (durationUnitSel.value === 'hours') {
-
-      const h = Number(parts[0])
-      if (isNaN(h)) {
-        return 0
-      }
-      durationInS = h * MIN_IN_H * SEC_IN_MIN;
-    }
-    if (durationUnitSel.value === 'mins') {
-      const m = Number(parts[0])
-      if (isNaN(m)) {
-        return 0
-      }
-      durationInS = m * SEC_IN_MIN;
-    }
-  }
-
-  if (parts.length === 2) {
-
-    if (durationUnitSel.value === 'hours') {
-
-      const h = Number(parts[0])
-      const m = Number(parts[1])
-      if (isNaN(h) || isNaN(m)) {
-        return 0
-      }
-      durationInS = h * MIN_IN_H * SEC_IN_MIN + m * SEC_IN_MIN;
-    }
-    if (durationUnitSel.value === 'mins') {
-      const m = Number(parts[0])
-      const s = Number(parts[1])
-      if (isNaN(m) || isNaN(s)) {
-        return 0
-      }
-      durationInS = m * SEC_IN_MIN + s;
-    }
-
-  }
-  if (parts.length === 3) {
-    durationUnitSel.value = 'hours'
-
-    const h = Number(parts[0])
-    const m = Number(parts[1])
-    const s = Number(parts[2])
-    if (isNaN(h) || isNaN(m) || isNaN(s)) {
-      return 0
-    }
-    durationInS = h * MIN_IN_H * SEC_IN_MIN + m * SEC_IN_MIN + s;
-
-  }
-  return durationInS
-}
-
-
-durationEl.addEventListener('input', (e: Event) => {
-
-  const target = e.target as HTMLInputElement;
-  const value = target.value
-
-  const durationInS = parseDuration(value)
-  duration.keepInput = true
-  duration.seconds = durationInS
-})
-
-const convertDistance = (distance: number, sourceUnit: DistanceUnit, targetUnit: DistanceUnit) => {
-  // @ts-ignore
-  return distanceConversion[sourceUnit][targetUnit](distance)
-}
-
 
 durationUnitSel.addEventListener('change', (e: Event) => {
   const target = e.target as HTMLInputElement;
@@ -437,99 +310,4 @@ durationUnitSel.addEventListener('change', (e: Event) => {
   durationEl.value = convertDuration(duration.seconds, unit)
 })
 
-// todo refactor and replace minDecToStr
-const convertDuration = (seconds: number, unit: DurationUnit) => {
-  if (seconds === 0) {
-    return ''
-  }
 
-  if (unit === "hours") {
-    const SEC_IN_H = SEC_IN_MIN * MIN_IN_H;
-
-    const h = Math.trunc(seconds / SEC_IN_H)
-
-    seconds = seconds % SEC_IN_H
-    const m = Math.trunc(seconds / SEC_IN_MIN)
-    seconds = Math.round(seconds % SEC_IN_MIN)
-
-    const minStr = String(m).padStart(2, '0');
-    const secStr = String(seconds).padStart(2, '0');
-
-    return `${h}:${minStr}:${secStr}`
-  } else if (unit === "mins") {
-
-    const m = Math.trunc(seconds / SEC_IN_MIN)
-    seconds = Math.round(seconds % SEC_IN_MIN)
-
-    const secStr = String(seconds).padStart(2, '0');
-
-    return `${m}:${secStr}`
-  }
-  return ''
-}
-
-const distanceUnit = new Proxy<{ previous: DistanceUnit }>({
-  previous: 'km'
-}, {
-  set(target, prop, value) {
-    if (prop === 'previous' && typeof value === 'string') {
-      target[prop] = value as DistanceUnit
-    }
-    return true
-  }
-})
-
-distanceUnitSel.addEventListener('change', (e: Event) => {
-  debugger;
-  const target = e.target as HTMLInputElement;
-  const unit = target.value as DistanceUnit
-
-  const previousDistance = Number(distanceEl.value)
-  if (isNaN(previousDistance)) {
-    distanceUnit.previous = unit
-    return
-  }
-
-  //  todo save distance as meters
-  const distance = convertDistance(previousDistance, distanceUnit.previous, unit)
-
-  if (distanceEl) {
-    distanceEl.value = String(distance.toFixed(2))
-  }
-  distanceUnit.previous = unit
-})
-
-
-distanceBtn.addEventListener('click', (e) => {
-  if (duration.seconds === 0 || speed.kmph === 0) {
-    return
-  }
-  const unit = distanceUnitSel.value as DistanceUnit
-
-  const distanceInKm = speed.kmph * duration.seconds / (SEC_IN_MIN * MIN_IN_H)
-  const distance = (unit === 'km')
-    ? distanceInKm
-    : convertDistance(distanceInKm, 'km', unit)
-  distanceEl.value = distance.toFixed(2)
-})
-
-durationBtn.addEventListener('click', (e) => {
-  const distance = Number(distanceEl.value)
-  if (isNaN(distance) || distance === 0 || speed.kmph === 0) {
-    return
-  }
-  let distanceInKm = (distanceUnitSel.value === 'km')
-    ? distance
-    : convertDistance(distance, 'km', 'km')
-
-  duration.keepInput = false;
-  duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
-})
-
-const calculateDurationInS = (kmph: number, km: number) => {
-  return km / kmph * MIN_IN_H * SEC_IN_MIN;
-}
-
-// if (distance.value !== 0 && speed.kmph !== 0 && paceBtn) {
-//   paceBtn.disabled = false
-// }
