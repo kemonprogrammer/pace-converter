@@ -28,14 +28,9 @@ const distanceBtn = getRequiredElement<HTMLInputElement>('#recalculate-distance'
 const paceBtn = getRequiredElement<HTMLInputElement>('#recalculate-pace');
 const durationBtn = getRequiredElement<HTMLInputElement>('#recalculate-time');
 
-type Distance = {
-  value: number;
-  unit: DistanceUnit;
-}
 
 type DistanceUnit = 'km' | 'mi' | 'm';
 type DurationUnit = 'hours' | 'mins';
-
 
 
 interface SpeedConfigItem {
@@ -291,6 +286,28 @@ minPerMiEl.addEventListener('input', (e: Event) => {
   speed.minPerMi = value;
 });
 
+
+paceBtn.addEventListener('click', (e) => {
+  const distance = Number(distanceEl.value)
+  if (isNaN(distance)) {
+    return
+  }
+  // distance to km
+  const unit = distanceUnitSel.value as DistanceUnit
+  const distanceInKm = (unit === 'km')
+    ? distance
+    : convertDistance(distance, unit, 'km')
+
+  const kmph = distance * SEC_IN_MIN * MIN_IN_H / duration.seconds
+  speed.kmph = kmph
+  // proxy setter fires on each input event and skips changing the 
+  // current input to not mess up typing. Here no input is being typed on,
+  // so we need to manually set input
+  kmphEl.value = Number(kmph).toFixed(2); 
+
+})
+
+
 distanceEl.addEventListener('input', (e: Event) => {
   const target = e.target as HTMLInputElement;
   const value = Number(target.value)
@@ -407,9 +424,9 @@ durationEl.addEventListener('input', (e: Event) => {
   duration.seconds = durationInS
 })
 
-const convertDistance = (distance: Distance, targetUnit: DistanceUnit) => {
+const convertDistance = (distance: number, sourceUnit: DistanceUnit, targetUnit: DistanceUnit) => {
   // @ts-ignore
-  return distanceConversion[distance.unit][targetUnit](distance.value)
+  return distanceConversion[sourceUnit][targetUnit](distance)
 }
 
 
@@ -451,11 +468,11 @@ const convertDuration = (seconds: number, unit: DurationUnit) => {
   return ''
 }
 
-const distanceUnit = new Proxy<{ previousValue: DistanceUnit }>({
-  previousValue: 'km'
+const distanceUnit = new Proxy<{ previous: DistanceUnit }>({
+  previous: 'km'
 }, {
   set(target, prop, value) {
-    if (prop === 'previousValue' && typeof value === 'string') {
+    if (prop === 'previous' && typeof value === 'string') {
       target[prop] = value as DistanceUnit
     }
     return true
@@ -463,25 +480,23 @@ const distanceUnit = new Proxy<{ previousValue: DistanceUnit }>({
 })
 
 distanceUnitSel.addEventListener('change', (e: Event) => {
+  debugger;
   const target = e.target as HTMLInputElement;
   const unit = target.value as DistanceUnit
 
   const previousDistance = Number(distanceEl.value)
   if (isNaN(previousDistance)) {
-    distanceUnit.previousValue = unit
+    distanceUnit.previous = unit
     return
   }
 
   //  todo save distance as meters
-  const distance = convertDistance({
-    value: previousDistance,
-    unit: distanceUnit.previousValue
-  }, unit)
+  const distance = convertDistance(previousDistance, distanceUnit.previous, unit)
 
   if (distanceEl) {
     distanceEl.value = String(distance.toFixed(2))
   }
-  distanceUnit.previousValue = unit
+  distanceUnit.previous = unit
 })
 
 
@@ -494,7 +509,7 @@ distanceBtn.addEventListener('click', (e) => {
   const distanceInKm = speed.kmph * duration.seconds / (SEC_IN_MIN * MIN_IN_H)
   const distance = (unit === 'km')
     ? distanceInKm
-    : convertDistance({ value: distanceInKm, unit: 'km' }, unit)
+    : convertDistance(distanceInKm, 'km', unit)
   distanceEl.value = distance.toFixed(2)
 })
 
@@ -505,7 +520,7 @@ durationBtn.addEventListener('click', (e) => {
   }
   let distanceInKm = (distanceUnitSel.value === 'km')
     ? distance
-    : convertDistance({ value: distance, unit: 'km' }, 'km')
+    : convertDistance(distance, 'km', 'km')
 
   duration.keepInput = false;
   duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
