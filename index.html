@@ -13,7 +13,8 @@
   <link href="/src/style.css" rel="stylesheet" />
 </head>
 
-<body class="bg-[#1a263a] sm:bg-slate-900 text-slate-100 min-h-screen flex sm:items-center items-start justify-center p-0 sm:p-6 font-sans">
+<body
+  class="bg-[#1a263a] sm:bg-slate-900 text-slate-100 min-h-dvh flex sm:items-center items-start justify-center p-0 sm:p-6 font-sans">
 
   <main
     class="w-full sm:max-w-md sm:bg-slate-800/80 sm:backdrop-blur-xl sm:border border-slate-700/60 sm:rounded-3xl p-4 sm:p-8 sm:shadow-2xl space-y-8">
@@ -33,10 +34,10 @@
     <section class="space-y-4">
       <div class="relative flex items-end justify-between">
         <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Pace & Speed</h2>
-        <button type="button" title="Recalculate speed"
-          class="absolute right-0 -top-2 p-2.5 bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
-          <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
-        </button>
+        <!-- <button type="button" title="Recalculate speed" -->
+        <!--   class="absolute right-0 -top-2 p-2.5 bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"> -->
+        <!--   <i data-lucide="rotate-ccw" class="w-5 h-5"></i> -->
+        <!-- </button> -->
 
       </div>
 
@@ -77,6 +78,11 @@
           </div>
         </div>
       </div>
+      <button id="recalculate-pace" type="button" 
+        class="w-full p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 text-sm hover:text-white transition active:scale-95 cursor-pointer">
+        Calculate required pace
+      </button>
+
     </section>
 
     <!-- Distance & Time Section -->
@@ -88,24 +94,29 @@
         <div class="space-y-1.5">
           <label class="block text-xs font-medium text-slate-400">Distance</label>
           <div class="flex items-center gap-2">
-            <input id="distance" type="number" placeholder="10"
+            <input id="distance" type="number" placeholder="e.g. 10"
               class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
             <select
+                id="distance-unit"
               class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
-              <selectedcontent>
-
-              <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4">
-      <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-    </svg>
-              </selectedcontent>
-              <options>
+              <!-- <selectedcontent> -->
+              <!---->
+              <!--   <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" -->
+              <!--     class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"> -->
+              <!--     <path -->
+              <!--       d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" -->
+              <!--       clip-rule="evenodd" fill-rule="evenodd" /> -->
+              <!--   </svg> -->
+              <!-- </selectedcontent> -->
+              <!-- <options> -->
                 <option value="km">km</option>
                 <option value="mi">mi</option>
                 <option value="m">m</option>
-              </options>
+              <!-- </options> -->
             </select>
-            <button type="button" title="Reset distance"
-              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95">
+            
+            <button id="recalculate-distance" type="button" title="Calculate distance"
+              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
               <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
           </div>
@@ -115,15 +126,16 @@
         <div class="space-y-1.5">
           <label class="block text-xs font-medium text-slate-400">Duration</label>
           <div class="flex items-center gap-2">
-            <input id="duration" type="text" placeholder="00:50:00"
+            <input id="duration" type="text" placeholder="e.g. 50:00"
               class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
             <select
+                id="duration-unit"
               class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
-              <option value="hours">hours</option>
               <option value="mins">mins</option>
+              <option value="hours">hours</option>
             </select>
-            <button type="button" title="Reset duration"
-              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95">
+            <button id="recalculate-time" type="button" title="Calculate time"
+              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
               <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
           </div>

@@ -1,15 +1,38 @@
+const M_IN_KM = 1000;
+const KM_IN_MILE = 1.60934;
+const MIN_IN_H = 60;
+const SEC_IN_MIN = 60;
+
 type SpeedKey = 'kmph' | 'minPerKm' | 'minPerMi' | 'mph';
 
 const minPerKmEl = document.querySelector<HTMLInputElement>('#min-per-km');
 const minPerMiEl = document.querySelector<HTMLInputElement>('#min-per-mile');
 const kmphEl = document.querySelector<HTMLInputElement>('#km-per-h');
 const mphEl = document.querySelector<HTMLInputElement>('#mile-per-h');
-// const durationEl = document.querySelector<HTMLInputElement>('#duration');
-// const distanceEl = document.querySelector<HTMLInputElement>('#distance');
+const durationEl = document.querySelector<HTMLInputElement>('#duration');
+const distanceEl = document.querySelector<HTMLInputElement>('#distance');
 
-const KM_IN_MILE = 1.60934;
-const MIN_IN_H = 60;
-const SEC_IN_MIN = 60;
+const distanceUnitSel = document.querySelector<HTMLSelectElement>('#distance-unit');
+const durationUnitSel = document.querySelector<HTMLSelectElement>('#duration-unit');
+
+const distanceBtn = document.querySelector<HTMLInputElement>('#recalculate-distance');
+const paceBtn = document.querySelector<HTMLInputElement>('#recalculate-pace');
+const durationBtn = document.querySelector<HTMLInputElement>('#recalculate-time');
+
+type Distance = {
+  value: number;
+  unit: DistanceUnit;
+}
+
+type DistanceUnit = 'km' | 'mi' | 'm';
+type DurationUnit = 'hours' | 'mins';
+
+const distance: Distance = {
+  value: 0,
+  unit: 'km',
+}
+
+
 
 interface SpeedConfigItem {
   el: HTMLInputElement | null;
@@ -58,7 +81,6 @@ const minStrToDec = (minStr: string): DecResult | undefined => {
     return;
   }
   if (parts.length === 0) {
-    console.error('no value provided');
     return;
   }
   let min = 0;
@@ -80,7 +102,7 @@ const minStrToDec = (minStr: string): DecResult | undefined => {
   return { min, sec };
 };
 
-const minPerMiInKmph = (minPerMi: string): number => {
+const minPerMiToKmph = (minPerMi: string): number => {
   const parts = minPerMi.split(':');
 
   const min = Number(parts[0]);
@@ -92,25 +114,27 @@ const minPerMiInKmph = (minPerMi: string): number => {
   return (KM_IN_MILE * MIN_IN_H) / minPerMiDec;
 };
 
-const kmphInMinPerKm = (kmph: number): string => {
-  const minDec = MIN_IN_H / kmph;
+const kmphToMinPerKm = (kmph: number): string => {
+  const minDec = (kmph === 0) ? 0 : MIN_IN_H / kmph;
   return minDecToStr(minDec);
 };
 
-const kmphInMinPerMi = (kmph: number): string => {
-  const minDec = (MIN_IN_H * KM_IN_MILE) / kmph;
+const kmphToMinPerMi = (kmph: number): string => {
+  const minDec = kmph === 0
+    ? 0
+    : (MIN_IN_H * KM_IN_MILE) / kmph;
   return minDecToStr(minDec);
 };
 
-const mphInKmph = (mph: number): number => {
+const mphToKmph = (mph: number): number => {
   return mph * KM_IN_MILE;
 };
 
-const kmphInMph = (kmph: number): number => {
+const kmphToMph = (kmph: number): number => {
   return kmph / KM_IN_MILE;
 };
 
-const minPerKmInKmph = (minPerKm: string): number => {
+const minPerKmToKmph = (minPerKm: string): number => {
   const parsed = minStrToDec(minPerKm);
   if (!parsed) return 0;
   const { min, sec } = parsed;
@@ -125,39 +149,38 @@ interface SpeedState {
   mph: number;
 }
 
-type ConversionMap = {
+
+const speedConversion = {
   kmph: {
-    mph: (kmph: number) => number;
-    minPerKm: (kmph: number) => string;
-    minPerMi: (kmph: number) => string;
-  };
+    mph: kmphToMph,
+    minPerKm: kmphToMinPerKm,
+    minPerMi: kmphToMinPerMi,
+  },
   minPerKm: {
-    kmph: (minPerKm: string) => number;
-  };
+    kmph: minPerKmToKmph,
+  },
   minPerMi: {
-    kmph: (minPerMi: string) => number;
-  };
+    kmph: minPerMiToKmph,
+  },
   mph: {
-    kmph: (mph: number) => number;
-  };
+    kmph: mphToKmph,
+  },
 };
 
-const conversion: ConversionMap = {
-  kmph: {
-    mph: kmphInMph,
-    minPerKm: kmphInMinPerKm,
-    minPerMi: kmphInMinPerMi,
+const distanceConversion = {
+  km: {
+    m: (km: number) => km * M_IN_KM,
+    mi: (km: number) => km * KM_IN_MILE,
   },
-  minPerKm: {
-    kmph: minPerKmInKmph,
+  m: {
+    km: (m: number) => m * M_IN_KM,
+    mi: (m: number) => m * M_IN_KM * KM_IN_MILE,
   },
-  minPerMi: {
-    kmph: minPerMiInKmph,
+  mi: {
+    m: (mi: number) => mi * M_IN_KM / KM_IN_MILE,
+    km: (mi: number) => mi / KM_IN_MILE,
   },
-  mph: {
-    kmph: mphInKmph,
-  },
-};
+} as const
 
 const speed = new Proxy<SpeedState>(
   {
@@ -173,7 +196,7 @@ const speed = new Proxy<SpeedState>(
       // calculate kmph
       if (prop !== 'kmph') {
         // @ts-ignore
-        const converter = conversion[prop]?.kmph as (v: any) => number;
+        const converter = speedConversion[prop]?.kmph as (v: any) => number;
         if (converter) {
           obj.kmph = converter(val);
         }
@@ -187,13 +210,17 @@ const speed = new Proxy<SpeedState>(
       // update other values from kmph
       for (const key of toRecalculate) {
         // Tell TypeScript we know this dynamic assignment is safe
-        ((obj as unknown) as Record<string, unknown>)[key] = conversion.kmph[key](obj.kmph);
+        ((obj as unknown) as Record<string, unknown>)[key] = speedConversion.kmph[key](obj.kmph);
       }
 
       // update DOM values
       for (const config of toUpdate) {
         if (!config.el) continue;
         let value: string | number = obj[config.key];
+        if (value === 0 || value === "0:00") {
+          config.el.value = ''
+          continue;
+        }
         if (config.key === 'mph' || config.key === 'kmph') {
           value = Number(value).toFixed(2);
         }
@@ -208,9 +235,14 @@ const speed = new Proxy<SpeedState>(
 kmphEl?.addEventListener('input', (e: Event) => {
   const target = e.target as HTMLInputElement;
   const value = target.value;
+
+  if (value === ''){
+    speed.kmph = 0
+    return
+  }
+
   const kmph = parseFloat(value);
   if (isNaN(kmph)) {
-    console.error(`Couldn't convert number ${value}, ${e}`);
     return;
   }
 
@@ -222,6 +254,11 @@ kmphEl?.addEventListener('input', (e: Event) => {
 mphEl?.addEventListener('input', (e: Event) => {
   const target = e.target as HTMLInputElement;
   const value = target.value;
+
+  if (value === ''){
+    speed.mph = 0
+    return
+  }
   const mph = parseFloat(value);
   if (isNaN(mph)) {
     console.error(`Couldn't convert number ${value}, ${e}`);
@@ -250,3 +287,214 @@ minPerMiEl?.addEventListener('input', (e: Event) => {
   }
   speed.minPerMi = value;
 });
+
+distanceEl?.addEventListener('input', (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const value = Number(target.value)
+
+  distance.value = isNaN(value) ? 0 : value
+
+  // check value empty
+
+  // if duration value empty
+  //   calculate duration: distance * pace
+
+  // else
+  //   show buttons: recalculate pace + recalculate duration
+  paceBtn?.style.setProperty('display', 'block')
+  durationBtn?.style.setProperty('display', 'block')
+})
+
+
+interface DurationProxy {
+  seconds: number;
+  keepInput: boolean;
+}
+const duration = new Proxy<DurationProxy>(
+  {
+    seconds: 0,
+    keepInput: false,
+  },
+  {
+    set(target, prop, value) {
+      if (prop === 'keepInput' && typeof value === 'boolean') {
+        target.keepInput = value
+      }
+      if (prop === 'seconds' && typeof value === 'number') {
+        target.seconds = value;
+        if (!target.keepInput && durationEl && durationUnitSel) {
+
+          durationEl.value = convertDuration(target.seconds, durationUnitSel.value as DurationUnit);
+        }
+      }
+      return true; // Proxy set traps must return a boolean indicating success
+    },
+  }
+);
+
+const parseDuration = (durStr: string) => {
+  let durationInS = 0
+  const parts = durStr.split(':')
+  if (parts.length > 3) {
+    return 0
+  }
+  if (parts.length === 1) {
+
+    if (durationUnitSel?.value === 'hours') {
+
+      const h = Number(parts[0])
+      if (isNaN(h)) {
+        return 0
+      }
+      durationInS = h * MIN_IN_H * SEC_IN_MIN;
+    }
+    if (durationUnitSel?.value === 'mins') {
+      const m = Number(parts[0])
+      if (isNaN(m)) {
+        return 0
+      }
+      durationInS = m * SEC_IN_MIN;
+    }
+  }
+
+  if (parts.length === 2) {
+
+    if (durationUnitSel?.value === 'hours') {
+
+      const h = Number(parts[0])
+      const m = Number(parts[1])
+      if (isNaN(h) || isNaN(m)) {
+        return 0
+      }
+      durationInS = h * MIN_IN_H * SEC_IN_MIN + m * SEC_IN_MIN;
+    }
+    if (durationUnitSel?.value === 'mins') {
+      const m = Number(parts[0])
+      const s = Number(parts[1])
+      if (isNaN(m) || isNaN(s)) {
+        return 0
+      }
+      durationInS = m * SEC_IN_MIN + s;
+    }
+
+  }
+  if (parts.length === 3) {
+    if (durationUnitSel) {
+      durationUnitSel.value = 'hours'
+    }
+
+    const h = Number(parts[0])
+    const m = Number(parts[1])
+    const s = Number(parts[2])
+    if (isNaN(h) || isNaN(m) || isNaN(s)) {
+      return 0
+    }
+    durationInS = h * MIN_IN_H * SEC_IN_MIN + m * SEC_IN_MIN + s;
+
+  }
+  return durationInS
+}
+
+
+durationEl?.addEventListener('input', (e: Event) => {
+
+  const target = e.target as HTMLInputElement;
+  const value = target.value
+
+  const durationInS = parseDuration(value)
+  duration.keepInput = true
+  duration.seconds = durationInS
+})
+
+const convertDistance = (distance: Distance, targetUnit: DistanceUnit) => {
+  // @ts-ignore
+  return distanceConversion[distance.unit][targetUnit](distance.value)
+}
+
+
+durationUnitSel?.addEventListener('change', (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const unit = target.value as DurationUnit
+
+  if (durationEl) {
+    durationEl.value = convertDuration(duration.seconds, unit)
+  }
+})
+
+const convertDuration = (seconds: number, unit: DurationUnit) => {
+
+  if (seconds === 0) {
+    return ''
+  }
+  if (unit === "hours") {
+    const SEC_IN_H = SEC_IN_MIN * MIN_IN_H;
+
+    const h = Math.trunc(seconds / SEC_IN_H)
+
+    seconds = seconds % SEC_IN_H
+    const m = Math.trunc(seconds / SEC_IN_MIN)
+    seconds = seconds % SEC_IN_MIN
+
+    const minStr = String(m).padStart(2, '0');
+    const secStr = String(seconds).padStart(2, '0');
+
+    return `${h}:${minStr}:${secStr}`
+  } else if (unit === "mins") {
+
+    const m = Math.trunc(seconds / SEC_IN_MIN)
+    seconds = seconds % SEC_IN_MIN
+
+    const secStr = String(seconds).padStart(2, '0');
+
+    return `${m}:${secStr}`
+  }
+  return ''
+}
+
+distanceUnitSel?.addEventListener('change', (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const unit = target.value as DistanceUnit
+
+  //  todo save distance as meters
+  distance.value = convertDistance(distance, unit)
+  distance.unit = unit
+
+  if (distanceEl) {
+    distanceEl.value = String(distance.value.toFixed(2))
+  }
+})
+
+
+
+distanceBtn?.addEventListener('click', (e) => {
+
+  // let distanceInKm = (distance.unit === 'km')
+  //   ? distance.value
+  //   : convertDistance(distance, 'km')
+  //
+  // if (distanceEl) {
+  //   distanceEl.value = calculateDuration(speed.kmph, distanceInKm)
+  // }
+})
+
+durationBtn?.addEventListener('click', (e) => {
+  if (distance.value === 0 || speed.kmph === 0) {
+    return
+  }
+  let distanceInKm = (distance.unit === 'km')
+    ? distance.value
+    : convertDistance(distance, 'km')
+
+  if (durationEl) {
+    duration.keepInput = false;
+    duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
+  }
+})
+
+const calculateDurationInS = (kmph: number, km: number) => {
+  return km / kmph * MIN_IN_H * SEC_IN_MIN;
+}
+
+// if (distance.value !== 0 && speed.kmph !== 0 && paceBtn) {
+//   paceBtn.disabled = false
+// }
