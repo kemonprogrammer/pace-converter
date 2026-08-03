@@ -189,20 +189,11 @@ speedRecalcBtn.addEventListener('click', () => {
 })
 
 
-distanceEl.addEventListener('input', () => {
-  // const target = e.target as HTMLInputElement;
-  // const value = Number(target.value)
-
-
-  // check value empty
-
-  // if duration value empty
-  //   calculate duration: distance * pace
-
-  // else
-  //   show buttons: recalculate pace + recalculate duration
-  speedRecalcBtn?.style.setProperty('display', 'block')
-  durationRecalcBtn?.style.setProperty('display', 'block')
+distanceEl.addEventListener('input', (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  const distance = Number(target.value)
+  const showRecalcPaceBtn = !(isNaN(distance) || distance === 0 || duration.seconds === 0)
+  speedRecalcBtn.style.setProperty('visibility', showRecalcPaceBtn ? 'visible' : 'hidden')
 })
 
 
@@ -274,6 +265,12 @@ durationEl.addEventListener('input', (e: Event) => {
   duration.keepInput = true
   duration.seconds = durationInS ?? 0
   durationUnitSel.value = unit ?? previousUnit
+
+  // hide/ show other recalc buttons
+  const distance = Number(distanceEl.value)
+  const showRecalcPaceBtn = !(isNaN(distance) || distance === 0 || duration.seconds === 0)
+  speedRecalcBtn.style.setProperty('visibility', showRecalcPaceBtn ? 'visible' : 'hidden')
+
 })
 
 interface DurationProxy {

@@ -31,7 +31,7 @@
     </header>
 
     <!-- Pace & Speed Section -->
-    <section class="space-y-4">
+    <section class="space-y-4 relative mb-[80px]">
       <div class="relative flex items-end justify-between">
         <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Pace & Speed</h2>
         <!-- <button type="button" title="Recalculate speed" -->
@@ -78,8 +78,10 @@
           </div>
         </div>
       </div>
-      <button id="recalculate-pace" type="button" 
-        class="w-full p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 text-sm hover:text-white transition active:scale-95 cursor-pointer">
+      <button id="recalculate-pace" type="button"
+        class="absolute invisible flex items-center justify-center gap-2 w-full p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 text-sm hover:text-white transition active:scale-95 cursor-pointer">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+
         Calculate required pace
       </button>
 
@@ -96,8 +98,7 @@
           <div class="flex items-center gap-2">
             <input id="distance" type="number" placeholder="e.g. 10"
               class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <select
-                id="distance-unit"
+            <select id="distance-unit"
               class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
               <!-- <selectedcontent> -->
               <!---->
@@ -109,12 +110,12 @@
               <!--   </svg> -->
               <!-- </selectedcontent> -->
               <!-- <options> -->
-                <option value="km">km</option>
-                <option value="mi">mi</option>
-                <option value="m">m</option>
+              <option value="km">km</option>
+              <option value="mi">mi</option>
+              <option value="m">m</option>
               <!-- </options> -->
             </select>
-            
+
             <button id="recalculate-distance" type="button" title="Calculate distance"
               class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
               <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
@@ -128,8 +129,7 @@
           <div class="flex items-center gap-2">
             <input id="duration" type="text" placeholder="e.g. 50:00"
               class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <select
-                id="duration-unit"
+            <select id="duration-unit"
               class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
               <option value="mins">mins</option>
               <option value="hours">hours</option>
