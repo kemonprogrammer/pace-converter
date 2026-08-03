@@ -334,6 +334,7 @@ const duration = new Proxy<DurationProxy>(
   }
 );
 
+// todo refactor
 const parseDuration = (durStr: string) => {
   let durationInS = 0
   const parts = durStr.split(':')
@@ -419,6 +420,7 @@ durationUnitSel.addEventListener('change', (e: Event) => {
   durationEl.value = convertDuration(duration.seconds, unit)
 })
 
+// todo refactor and replace minDecToStr
 const convertDuration = (seconds: number, unit: DurationUnit) => {
   if (seconds === 0) {
     return ''
@@ -431,7 +433,7 @@ const convertDuration = (seconds: number, unit: DurationUnit) => {
 
     seconds = seconds % SEC_IN_H
     const m = Math.trunc(seconds / SEC_IN_MIN)
-    seconds = seconds % SEC_IN_MIN
+    seconds = Math.round(seconds % SEC_IN_MIN)
 
     const minStr = String(m).padStart(2, '0');
     const secStr = String(seconds).padStart(2, '0');
@@ -440,7 +442,7 @@ const convertDuration = (seconds: number, unit: DurationUnit) => {
   } else if (unit === "mins") {
 
     const m = Math.trunc(seconds / SEC_IN_MIN)
-    seconds = seconds % SEC_IN_MIN
+    seconds = Math.round(seconds % SEC_IN_MIN)
 
     const secStr = String(seconds).padStart(2, '0');
 
@@ -489,11 +491,11 @@ distanceBtn.addEventListener('click', (e) => {
   }
   const unit = distanceUnitSel.value as DistanceUnit
 
-  const newDistanceInKm = speed.kmph * duration.seconds / (SEC_IN_MIN * MIN_IN_H)
-  const newDistance = (unit === 'km')
-    ? newDistanceInKm
-    : convertDistance({ value: newDistanceInKm, unit: 'km' }, unit)
-  distanceEl.value = newDistance
+  const distanceInKm = speed.kmph * duration.seconds / (SEC_IN_MIN * MIN_IN_H)
+  const distance = (unit === 'km')
+    ? distanceInKm
+    : convertDistance({ value: distanceInKm, unit: 'km' }, unit)
+  distanceEl.value = distance.toFixed(2)
 })
 
 durationBtn.addEventListener('click', (e) => {
