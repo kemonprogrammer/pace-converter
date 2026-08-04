@@ -221,7 +221,7 @@ distanceUnitSel.addEventListener('change', (e: Event) => {
   //  todo save distance as meters
   const distance = convertDistance(previousDistance, distanceUnit.previous, unit)
 
-  if (distanceEl) {
+  if (distance !== 0) {
     distanceEl.value = String(distance.toFixed(2))
   }
   distanceUnit.previous = unit
@@ -239,19 +239,6 @@ distanceRecalcBtn.addEventListener('click', () => {
     ? distanceInKm
     : convertDistance(distanceInKm, 'km', unit)
   distanceEl.value = distance.toFixed(2)
-})
-
-durationRecalcBtn.addEventListener('click', () => {
-  const distance = Number(distanceEl.value)
-  if (isNaN(distance) || distance === 0 || speed.kmph === 0) {
-    return
-  }
-  let distanceInKm = (distanceUnitSel.value === 'km')
-    ? distance
-    : convertDistance(distance, 'km', 'km')
-
-  duration.keepInput = false;
-  duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
 })
 
 
@@ -308,3 +295,15 @@ durationUnitSel.addEventListener('change', (e: Event) => {
 })
 
 
+durationRecalcBtn.addEventListener('click', () => {
+  const distance = Number(distanceEl.value)
+  if (isNaN(distance) || distance === 0 || speed.kmph === 0) {
+    return
+  }
+  let distanceInKm = (distanceUnitSel.value === 'km')
+    ? distance
+    : convertDistance(distance, 'km', 'km')
+
+  duration.keepInput = false;
+  duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
+})
