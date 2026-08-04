@@ -44,37 +44,41 @@
       <div class="grid grid-cols-2 gap-4 rounded-2xl">
         <!-- min/km -->
         <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-400">min / km</label>
+          <!-- <label class="block text-sm font-medium text-slate-400">min / km</label> -->
           <div class="relative">
-            <input id="min-per-km" type="text" placeholder="e.g. 5:30"
+            <input id="min-per-km" type="text" placeholder="5:30"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <span class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 "> min/km</span>
           </div>
         </div>
 
         <!-- km/h -->
         <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-400">km / h</label>
+          <!-- <label class="block text-sm font-medium text-slate-400">km / h</label> -->
           <div class="relative">
             <input id="km-per-h" type="number" placeholder=""
               class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <span class="text-slate-500 pointer-events-none absolute  right-2 top-1/2 -translate-y-1/2 ">km/h</span>
           </div>
         </div>
 
         <!-- min/mile -->
         <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-400">min / mile</label>
+          <!-- <label class="block text-sm font-medium text-slate-400">min / mile</label> -->
           <div class="relative">
             <input id="min-per-mile" type="text" placeholder=""
               class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <span class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 ">min/mi</span>
           </div>
         </div>
 
         <!-- mph -->
         <div class="space-y-1.5">
-          <label class="block text-sm font-medium text-slate-400">mph</label>
+          <!-- <label class="block text-sm font-medium text-slate-400">mph</label> -->
           <div class="relative">
             <input id="mile-per-h" type="number" placeholder=""
               class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <span class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 ">mph</span>
           </div>
         </div>
       </div>
@@ -96,25 +100,19 @@
         <div class="space-y-1.5">
           <label class="block text-sm font-medium text-slate-400">Distance</label>
           <div class="flex items-center gap-2">
-            <input id="distance" type="number" placeholder="e.g. 10"
-              class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <select id="distance-unit"
-              class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
-              <!-- <selectedcontent> -->
-              <!---->
-              <!--   <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" -->
-              <!--     class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"> -->
-              <!--     <path -->
-              <!--       d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" -->
-              <!--       clip-rule="evenodd" fill-rule="evenodd" /> -->
-              <!--   </svg> -->
-              <!-- </selectedcontent> -->
-              <!-- <options> -->
-              <option value="km">km</option>
-              <option value="mi">mi</option>
-              <option value="m">m</option>
-              <!-- </options> -->
-            </select>
+            <div class="flex flex-1 min-w-0">
+
+              <input id="distance" type="number" placeholder="e.g. 10.2"
+                class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-l-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+              <select id="distance-unit"
+                class="bg-slate-900 border border-slate-700 rounded-r-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+                <option value="km">km</option>
+                <option value="mi">mi</option>
+                <option value="m">m</option>
+                <!-- </options> -->
+              </select>
+            </div>
+
 
             <button id="recalculate-distance" type="button" title="Calculate distance"
               class="p-3.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
@@ -127,13 +125,15 @@
         <div class="space-y-1.5">
           <label class="block text-sm font-medium text-slate-400">Duration</label>
           <div class="flex items-center gap-2">
-            <input id="duration" type="text" placeholder="e.g. 50:00"
-              class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <select id="duration-unit"
-              class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
-              <option value="mins">mins</option>
-              <option value="hours">hours</option>
-            </select>
+            <div class="flex flex-1 min-w-0">
+              <input id="duration" type="text" placeholder="e.g. 30m30"
+                class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-l-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+              <select id="duration-unit"
+                class="bg-slate-900 border border-slate-700 rounded-r-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+                <option value="mins">mins</option>
+                <option value="hours">hours</option>
+              </select>
+            </div>
             <button id="recalculate-time" type="button" title="Calculate time"
               class="p-3.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
               <i data-lucide="rotate-ccw" class="w-4.5 h-4.5"></i>
