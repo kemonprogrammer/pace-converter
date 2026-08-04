@@ -26,16 +26,16 @@
           <i data-lucide="gauge" class="w-6 h-6 text-indigo-400"></i>
           Pace Converter
         </h1>
-        <p class="text-xs text-slate-400 mt-1">Calculate and convert running metrics effortlessly</p>
+        <p class="text-sm text-slate-400 mt-1">Calculate and convert running metrics effortlessly</p>
       </div>
     </header>
 
     <!-- Pace & Speed Section -->
     <section class="space-y-4 relative mb-[80px]">
       <div class="relative flex items-end justify-between">
-        <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Pace & Speed</h2>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-indigo-400">Pace & Speed</h2>
         <!-- <button type="button" title="Recalculate speed" -->
-        <!--   class="absolute right-0 -top-2 p-2.5 bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"> -->
+        <!--   class="absolute right-0 -top-2 p-2.5 bg-slate-900 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"> -->
         <!--   <i data-lucide="rotate-ccw" class="w-5 h-5"></i> -->
         <!-- </button> -->
 
@@ -44,42 +44,42 @@
       <div class="grid grid-cols-2 gap-4 rounded-2xl">
         <!-- min/km -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-slate-400">min / km</label>
+          <label class="block text-sm font-medium text-slate-400">min / km</label>
           <div class="relative">
-            <input id="min-per-km" type="text" placeholder="e.g. 5:00"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <input id="min-per-km" type="text" placeholder="e.g. 5:30"
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
           </div>
         </div>
 
         <!-- km/h -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-slate-400">km / h</label>
+          <label class="block text-sm font-medium text-slate-400">km / h</label>
           <div class="relative">
-            <input id="km-per-h" type="number" placeholder="e.g. 12.0"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <input id="km-per-h" type="number" placeholder=""
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
           </div>
         </div>
 
         <!-- min/mile -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-slate-400">min / mile</label>
+          <label class="block text-sm font-medium text-slate-400">min / mile</label>
           <div class="relative">
-            <input id="min-per-mile" type="text" placeholder="e.g. 8:03"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <input id="min-per-mile" type="text" placeholder=""
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
           </div>
         </div>
 
         <!-- mph -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-slate-400">mph</label>
+          <label class="block text-sm font-medium text-slate-400">mph</label>
           <div class="relative">
-            <input id="mile-per-h" type="number" placeholder="e.g. 7.46"
-              class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            <input id="mile-per-h" type="number" placeholder=""
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
           </div>
         </div>
       </div>
       <button id="recalculate-pace" type="button"
-        class="absolute invisible flex items-center justify-center gap-2 w-full p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 text-sm hover:text-white transition active:scale-95 cursor-pointer">
+        class="absolute invisible flex items-center justify-center gap-2 w-full p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-full text-slate-400 text-sm hover:text-white transition active:scale-95 cursor-pointer">
         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
 
         Calculate required pace
@@ -89,17 +89,17 @@
 
     <!-- Distance & Time Section -->
     <section class="space-y-4">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Workout Targets</h2>
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-indigo-400">Workout Targets</h2>
 
       <div class="space-y-4">
         <!-- Distance -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-slate-400">Distance</label>
+          <label class="block text-sm font-medium text-slate-400">Distance</label>
           <div class="flex items-center gap-2">
             <input id="distance" type="number" placeholder="e.g. 10"
-              class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+              class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
             <select id="distance-unit"
-              class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+              class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
               <!-- <selectedcontent> -->
               <!---->
               <!--   <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" -->
@@ -117,32 +117,31 @@
             </select>
 
             <button id="recalculate-distance" type="button" title="Calculate distance"
-              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              class="p-3.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
+              <i data-lucide="rotate-ccw" class="w-4.5 h-4.5"></i>
             </button>
           </div>
         </div>
 
         <!-- Duration -->
         <div class="space-y-1.5">
-          <label class="block text-xs font-medium text-slate-400">Duration</label>
+          <label class="block text-sm font-medium text-slate-400">Duration</label>
           <div class="flex items-center gap-2">
             <input id="duration" type="text" placeholder="e.g. 50:00"
-              class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+              class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
             <select id="duration-unit"
-              class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
+              class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
               <option value="mins">mins</option>
               <option value="hours">hours</option>
             </select>
             <button id="recalculate-time" type="button" title="Calculate time"
-              class="p-2.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+              class="p-3.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-400 hover:text-white transition active:scale-95 cursor-pointer">
+              <i data-lucide="rotate-ccw" class="w-4.5 h-4.5"></i>
             </button>
           </div>
         </div>
       </div>
 
-      </div>
     </section>
 
   </main>
