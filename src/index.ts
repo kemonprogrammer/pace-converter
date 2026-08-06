@@ -1,4 +1,4 @@
-import { calculateDistance, calculateDurationInS, calculateSpeed, convertDistance, convertDuration, parseDuration, speedConversion, type DistanceUnit, type DurationUnit } from './util.ts';
+import { calculateDistance, calculateDurationInS, calculateSpeed, calculateCommonTargets, convertDistance, convertDuration, parseDuration, speedConversion, type DistanceUnit, type DurationUnit } from './util.ts';
 
 type SpeedKey = 'kmph' | 'minPerKm' | 'minPerMi' | 'mph';
 
@@ -25,7 +25,10 @@ const distanceRecalcBtn = getRequiredElement<HTMLInputElement>('#recalculate-dis
 const speedRecalcBtn = getRequiredElement<HTMLInputElement>('#recalculate-pace');
 const durationRecalcBtn = getRequiredElement<HTMLInputElement>('#recalculate-time');
 
-
+const time5k = getRequiredElement<HTMLElement>('#time-5k');
+const time10k = getRequiredElement<HTMLElement>('#time-10k');
+const time21k = getRequiredElement<HTMLElement>('#half-marathon-time');
+const time42k = getRequiredElement<HTMLElement>('#marathon-time');
 
 
 interface SpeedConfigItem {
@@ -51,7 +54,6 @@ const speedConfig: readonly SpeedConfigItem[] = Object.freeze([
     key: 'mph',
   },
 ]);
-
 
 
 interface SpeedState {
@@ -104,6 +106,14 @@ const speed = new Proxy<SpeedState>(
           value = Number(value).toFixed(2);
         }
         config.el.value = String(value);
+      }
+
+      if (obj.kmph !== 0) {
+        const targets = calculateCommonTargets(obj.kmph)
+        time5k.textContent = targets.time5k
+        time10k.textContent = targets.time10k
+        time21k.textContent = targets.time21k
+        time42k.textContent = targets.time42k
       }
 
       return true;
@@ -296,14 +306,19 @@ durationUnitSel.addEventListener('change', (e: Event) => {
 
 
 durationRecalcBtn.addEventListener('click', () => {
+  // debugger;
   const distance = Number(distanceEl.value)
   if (isNaN(distance) || distance === 0 || speed.kmph === 0) {
     return
   }
-  let distanceInKm = (distanceUnitSel.value === 'km')
+  const sourceUnit = distanceUnitSel.value as DistanceUnit
+  const targetUnit = 'km' as DistanceUnit
+  let distanceInKm = (sourceUnit === targetUnit)
     ? distance
-    : convertDistance(distance, 'km', 'km')
+    : convertDistance(distance, sourceUnit, targetUnit)
 
   duration.keepInput = false;
   duration.seconds = calculateDurationInS(speed.kmph, distanceInKm)
 })
+
+

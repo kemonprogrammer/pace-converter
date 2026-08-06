@@ -6,6 +6,7 @@ const M_IN_KM = 1000;
 const KM_IN_MILE = 1.60934;
 const MIN_IN_H = 60;
 const SEC_IN_MIN = 60;
+const KM_IN_HALF_MARATHON = 21.0975;
 
 export const minDecToStr = (minDec: number): string => {
   let min = Math.trunc(minDec);
@@ -129,11 +130,25 @@ export const convertDistance = (distance: number, sourceUnit: DistanceUnit, targ
   return distanceConversion[sourceUnit][targetUnit](distance)
 }
 
+export const calculateCommonTargets = (kmph: number) => {
+  const time5k = calculateDurationInS(kmph, 5)
+  const time10k = time5k * 2
+  const time21k = calculateDurationInS(kmph, KM_IN_HALF_MARATHON)
+  const time42k = time21k * 2
+
+  return {
+      time5k: convertDuration(time5k, 'hours'),
+      time10k: convertDuration(time10k, 'hours'),
+      time21k: convertDuration(time21k, 'hours'),
+      time42k: convertDuration(time42k, 'hours'),
+  }
+}
+
 export const calculateDurationInS = (kmph: number, km: number) => {
   return km / kmph * MIN_IN_H * SEC_IN_MIN;
 }
 
-export const calculateSpeed = (km: number, sec: number)=>{
+export const calculateSpeed = (km: number, sec: number) => {
   return km * SEC_IN_MIN * MIN_IN_H / sec
 }
 
@@ -146,22 +161,23 @@ export const calculateDistance = (kmph: number, seconds: number) => {
 // todo refactor
 export const parseDuration = (durStr: string, unit: DurationUnit) => {
   let durationInS = 0
-  const parts = durStr.split(':')
-  if (parts.length > 3) {
+  // colon separators
+  const colonParts = durStr.split(':')
+  if (colonParts.length > 3) {
     return {}
   }
 
-  if (parts.length === 1) {
+  if (colonParts.length === 1) {
     if (unit === 'hours') {
 
-      const h = Number(parts[0])
+      const h = Number(colonParts[0])
       if (isNaN(h)) {
         return {}
       }
       durationInS = h * MIN_IN_H * SEC_IN_MIN;
     }
     if (unit === 'mins') {
-      const m = Number(parts[0])
+      const m = Number(colonParts[0])
       if (isNaN(m)) {
         return {}
       }
@@ -169,10 +185,10 @@ export const parseDuration = (durStr: string, unit: DurationUnit) => {
     }
   }
 
-  if (parts.length === 2) {
+  if (colonParts.length === 2) {
     if (unit === 'hours') {
-      const h = Number(parts[0])
-      const m = Number(parts[1])
+      const h = Number(colonParts[0])
+      const m = Number(colonParts[1])
       if (isNaN(h) || isNaN(m)) {
         return {}
       }
@@ -180,8 +196,8 @@ export const parseDuration = (durStr: string, unit: DurationUnit) => {
     }
 
     if (unit === 'mins') {
-      const m = Number(parts[0])
-      const s = Number(parts[1])
+      const m = Number(colonParts[0])
+      const s = Number(colonParts[1])
       if (isNaN(m) || isNaN(s)) {
         return {}
       }
@@ -189,20 +205,108 @@ export const parseDuration = (durStr: string, unit: DurationUnit) => {
     }
   }
 
-  if (parts.length === 3) {
-    const h = Number(parts[0])
-    const m = Number(parts[1])
-    const s = Number(parts[2])
+  if (colonParts.length === 3) {
+    const h = Number(colonParts[0])
+    const m = Number(colonParts[1])
+    const s = Number(colonParts[2])
     if (isNaN(h) || isNaN(m) || isNaN(s)) {
       return {}
     }
     durationInS = h * MIN_IN_H * SEC_IN_MIN + m * SEC_IN_MIN + s;
     unit = 'hours'
   }
+
+  // compact time unit notation: 1h30m45s
+  // todo later: try parser
+
+  // examples:
+  // 1h -> hour, 1:00:00, 1h
+  // 1h30 -> hour, 1:30:00, 1h30
+  // 30m -> mins, 30:00, 30m
+  // 30m30s -> m, 30:30, 30m30s
+  // 30m30s -> m, 30:30, 30m30s
+
+
+  const hmsParts = durStr.split('m')
+
+
+
+
   return {
     durationInS,
     unit
   }
+}
+
+class DurationParser {
+  #value: string;
+  #i: number = 0;
+  #durationInS = 0;
+
+  constructor(value: string) {
+    this.#value = value
+  }
+
+  parseHMS(): number {
+    const valid = this.#validate(
+      this.#opt(
+        () => this.#num(),
+        () => this.#char('h'),
+      ),
+      this.#opt(
+        () => this.#num(),
+        () => this.#char('m'),
+      ),
+      this.#opt(
+        () => this.#num(),
+        () => this.#char('s'),
+      ),
+    )
+    return valid ? this.#durationInS : 0
+
+  }
+
+  #validate(...args: boolean[]): boolean {
+    return args.indexOf(false) === -1
+  }
+
+  #num(): boolean {
+    const startI = this.#i
+
+    while (this.#i < this.#value.length
+      && /\d/.test(this.#value[this.#i])
+    ) {
+      this.#i++
+    }
+    if (startI === this.#i){
+      return false
+    }
+
+    this.#durationInS += Number(this.#value.substring(startI, this.#i))
+
+    return true
+  }
+
+  #char(c: string): boolean {
+    if (this.#value[this.#i] !== c) {
+      return false
+    }
+    this.#i++
+    return true
+  }
+
+  #opt(...args: Array<() => boolean>): boolean {
+    const curI = this.#i
+
+    for (const arg of args) {
+      if (!arg()) {
+        this.#i = curI
+        break
+      }
+    }
+    return true
+  }
+
 }
 
 
@@ -236,3 +340,5 @@ export const convertDuration = (seconds: number, unit: DurationUnit) => {
   }
   return ''
 }
+
+

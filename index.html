@@ -46,9 +46,10 @@
         <div class="space-y-1.5">
           <!-- <label class="block text-sm font-medium text-slate-400">min / km</label> -->
           <div class="relative">
-            <input id="min-per-km" type="text" placeholder="5:30"
+            <input id="min-per-km" type="text" placeholder="e.g. 5:30"
               class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <span class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 "> min/km</span>
+            <span class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 ">
+              min/km</span>
           </div>
         </div>
 
@@ -68,7 +69,8 @@
           <div class="relative">
             <input id="min-per-mile" type="text" placeholder=""
               class="w-full bg-slate-900 border border-slate-700 rounded-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
-            <span class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 ">min/mi</span>
+            <span
+              class="text-slate-500 pointer-events-none absolute z-100 right-2 top-1/2 -translate-y-1/2 ">min/mi</span>
           </div>
         </div>
 
@@ -126,7 +128,7 @@
           <label class="block text-sm font-medium text-slate-400">Duration</label>
           <div class="flex items-center gap-2">
             <div class="flex flex-1 min-w-0">
-              <input id="duration" type="text" placeholder="e.g. 30m30"
+              <input id="duration" type="text" placeholder="e.g. 30m45s"
                 class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-l-lg -ml-[1px] px-3.5 py-2.5 text-lg font-medium text-white placeholder-slate-500 placeholder:italic focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
               <select id="duration-unit"
                 class="bg-slate-900 border border-slate-700 rounded-r-lg px-3 py-3 text-lg font-medium text-slate-300 focus:outline-none focus:border-indigo-500 transition cursor-pointer">
@@ -141,6 +143,40 @@
           </div>
         </div>
       </div>
+
+    </section>
+    <section class="space-y-4">
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-indigo-400">Common Targets</h2>
+
+      <div class="w-full ">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700">
+              <th class="py-2 text-left font-bold text-slate-400">Distance</th>
+              <th class="py-2 text-right font-bold text-slate-400">Duration</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            <tr>
+              <td class="py-2 text-left">5km</td>
+              <td id="time-5k" class="py-2 text-right">30:00</td>
+            </tr>
+            <tr>
+              <td class="py-2 text-left">10km</td>
+              <td id="time-10k" class="py-2 text-right">1:00:00</td>
+            </tr>
+            <tr>
+              <td class="py-2 text-left">Half marathon (21.1km)</td>
+              <td id="half-marathon-time" class="py-2 text-right">2:12:00</td>
+            </tr>
+            <tr>
+              <td class="py-2 text-left">Full marathon (42.2km)</td>
+              <td id="marathon-time" class="py-2 text-right">4:24:00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
 
     </section>
 
