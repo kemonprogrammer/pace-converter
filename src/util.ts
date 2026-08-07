@@ -226,11 +226,7 @@ export const parseDuration = (durStr: string, unit: DurationUnit) => {
   // 30m30s -> m, 30:30, 30m30s
   // 30m30s -> m, 30:30, 30m30s
 
-
-  const hmsParts = durStr.split('m')
-
-
-
+  new DurationParser(durStr) // todo
 
   return {
     durationInS,
